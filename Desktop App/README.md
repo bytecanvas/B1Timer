@@ -15,5 +15,3 @@ This is a Python-based timer application to help you track the time for each sec
 1. Clone or download this repository.
 2. Run the `app.exe` file.
 
-## License:
-This project is open-source and available under the MIT License.
