@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DE B1-Prüfungstimer</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="icon" type="image/png" href="icon1.png" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap");
+
+      * {
+        font-family: "Kalam", cursive !important;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        color: #fff;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      /* Title */
+      .title {
+        font-size: 42px;
+        margin: 20px 0;
+        text-align: center;
+      }
+
+      .container {
+        display: flex;
+        gap: 20px;
+        width: 95%;
+        max-width: 1200px;
+        align-items: stretch;
+      }
+
+      .card {
+        flex: 1;
+        padding: 18px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(18px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+      }
+
+      .card h2 {
+        text-align: center;
+        margin-bottom: 12px;
+        font-weight: 600;
+      }
+
+      .presets {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .presets button {
+        border: none;
+        border-radius: 999px;
+        padding: 12px 18px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      }
+
+      .presets button:hover {
+        transform: translateY(-2px) scale(1.05);
+      }
+
+      .lesen {
+        background: linear-gradient(135deg, #42a5f5, #1e88e5);
+      }
+      .horen {
+        background: linear-gradient(135deg, #66bb6a, #388e3c);
+      }
+      .schreiben {
+        background: linear-gradient(135deg, #ffb74d, #f57c00);
+      }
+      .sprechen {
+        background: linear-gradient(135deg, #f06292, #c2185b);
+      }
+
+      /* Center Timer */
+      .timer-card {
+        flex: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .circle {
+        width: 260px;
+        height: 260px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: conic-gradient(
+          var(--circle-color, #1e88e5) var(--progress, 0%),
+          rgba(255, 255, 255, 0.1) 0%
+        );
+        position: relative;
+        cursor: pointer;
+      }
+
+      .circle::before {
+        content: "";
+        position: absolute;
+        width: 220px;
+        height: 220px;
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 50%;
+      }
+
+      #time {
+        position: absolute;
+        font-size: 36px;
+        font-weight: 700;
+        z-index: 2;
+      }
+
+      .controls {
+        margin-top: 20px;
+        display: flex;
+        gap: 15px;
+      }
+
+      .controls button {
+        border: none;
+        border-radius: 999px;
+        padding: 12px 20px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: #fff;
+        background: linear-gradient(135deg, #1e88e5, #42a5f5);
+        box-shadow: 0 4px 12px rgba(30, 136, 229, 0.4);
+      }
+
+      .controls button:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 6px 16px rgba(30, 136, 229, 0.6);
+      }
+
+      /* Eigene Dauer */
+      .card.eigene {
+        max-width: 280px;
+        margin: 0 auto;
+        text-align: center;
+        padding: 20px 18px;
+      }
+
+      .custom {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .custom input {
+        flex: 1;
+        max-width: 110px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        background: rgba(0, 0, 0, 0.4);
+        color: #fff;
+        font-size: 15px;
+        font-weight: 500;
+        text-align: center;
+        transition: 0.3s;
+      }
+
+      .custom input:focus {
+        outline: none;
+        border-color: #1e88e5;
+        box-shadow: 0 0 12px #1e88e5;
+      }
+
+      .custom button {
+        border: none;
+        border-radius: 999px;
+        padding: 10px 16px;
+        background: linear-gradient(135deg, #1e88e5, #42a5f5);
+        color: #fff;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s ease;
+        box-shadow: 0 4px 12px rgba(30, 136, 229, 0.4);
+      }
+
+      .custom button:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 6px 16px rgba(30, 136, 229, 0.6);
+      }
+
+      /* Footer / Watermark */
+      .footer {
+        margin-top: 30px;
+        padding: 10px 20px;
+        font-size: 18px;
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(12px);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        text-align: center;
+      }
+
+      /* Responsive */
+      @media (max-width: 900px) {
+        .container {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .card {
+          width: 90%;
+          max-width: 400px;
+        }
+
+        .timer-card {
+          order: -1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="title">DE B1-Prüfungstimer</div>
+
+    <div class="container">
+      <!-- Vorlagen -->
+      <div class="card">
+        <h2>Vorlagen</h2>
+        <div class="presets">
+          <button class="lesen" onclick="setTimer(65, '#1e88e5')">
+            📖 Lesen – 65 Min
+          </button>
+          <button class="horen" onclick="setTimer(40, '#388e3c')">
+            🎧 Hören – 40 Min
+          </button>
+          <button class="schreiben" onclick="setTimer(60, '#f57c00')">
+            ✍️ Schreiben – 60 Min
+          </button>
+          <button class="sprechen" onclick="setTimer(15, '#c2185b')">
+            🗣️ Sprechen – 15 Min
+          </button>
+        </div>
+      </div>
+
+      <!-- Timer -->
+      <div class="timer-card">
+        <div class="circle" onclick="handleCircleClick()">
+          <div id="time">00:00</div>
+        </div>
+        <div class="controls">
+          <button onclick="startTimer()">Start</button>
+          <button onclick="stopTimer()">Stop</button>
+        </div>
+      </div>
+
+      <!-- Eigene Dauer -->
+      <div class="card eigene">
+        <h2>Eigene Dauer</h2>
+        <div class="custom">
+          <input type="number" id="customMinutes" placeholder="Minuten" />
+          <button onclick="setCustom()">Setzen</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">Hergestellt mit ❤️ von @Aayush</div>
+
+    <audio id="alarmSound" loop>
+      <source
+        src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg"
+        type="audio/ogg"
+      />
+    </audio>
+
+    <script>
+      let timer;
+      let timeLeft = 0;
+      let totalTime = 0;
+      let running = false;
+      let negative = false;
+
+      const timeDisplay = document.getElementById("time");
+      const circle = document.querySelector(".circle");
+      const alarmSound = document.getElementById("alarmSound");
+
+      function setTimer(mins, color = "#1e88e5") {
+        stopTimer();
+        timeLeft = mins * 60;
+        totalTime = timeLeft;
+        negative = false;
+        circle.style.setProperty("--circle-color", color);
+        updateDisplay();
+      }
+
+      function setCustom() {
+        const mins = document.getElementById("customMinutes").value;
+        if (mins > 0) {
+          setTimer(mins, "#42a5f5"); // default custom color
+        }
+      }
+
+      function startTimer() {
+        if (running) return;
+        running = true;
+        timer = setInterval(() => {
+          timeLeft--;
+          if (timeLeft < 0) {
+            negative = true;
+            alarmSound.play();
+          }
+          updateDisplay();
+        }, 1000);
+      }
+
+      function stopTimer() {
+        running = false;
+        clearInterval(timer);
+        alarmSound.pause();
+        alarmSound.currentTime = 0;
+      }
+
+      function handleCircleClick() {
+        if (negative) {
+          stopTimer();
+          timeLeft = 0;
+          totalTime = 0;
+          negative = false;
+          updateDisplay();
+        }
+      }
+
+      function updateDisplay() {
+        let displayTime = timeLeft;
+        let sign = "";
+        if (negative) {
+          displayTime = Math.abs(timeLeft);
+          sign = "-";
+        }
+        let minutes = Math.floor(displayTime / 60);
+        let seconds = displayTime % 60;
+        timeDisplay.textContent = `${sign}${String(minutes).padStart(
+          2,
+          "0"
+        )}:${String(seconds).padStart(2, "0")}`;
+
+        if (!negative && totalTime > 0) {
+          const progress = ((totalTime - timeLeft) / totalTime) * 100;
+          circle.style.setProperty("--progress", progress + "%");
+        } else if (negative) {
+          circle.style.setProperty("--progress", "100%");
+        } else {
+          circle.style.setProperty("--progress", "0%");
+        }
+      }
+
+      // Default
+      setTimer(65, "#1e88e5");
+    </script>
+  </body>
+</html>
